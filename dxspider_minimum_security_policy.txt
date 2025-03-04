@@ -6,7 +6,10 @@ It is mainly our responsability to keep the cluster network safe.
 
 ==============================================================================
 NOTES:
-    - The "$" shown at the beginning of the command lines is not to be included, but just an indication of being logged as sysop and at the command prompt of your computer
+    - All the contents of this file are related to Dirk Koopman G1TLH DXspider software. https://www.dxcluster.org
+
+    - The "$" shown at the beginning of the command lines is not to be included, but just an indication of being logged as sysop and at the command prompt of your computer.
+
     - When some text is enclosed between "<" ">", they don't have to be included. It is just to say that some info must be typed.
       f.i., if you see <callsign>, a callsign (without < >) must be typed. It must include the -SSID in case, f.i.: EA2XX-23
 
