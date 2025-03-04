@@ -1,0 +1,85 @@
+MINIMUM SECURITY MEASURES TO MINIMIZE ATTACKS TO THE DX CLUSTER NETWORK 
+v1.1 2025-03-04 12:54 UTC
+
+First of all, be conscious that these all measures don't depend on the software developers nor the users, but only on the nodes sysops.
+It is mainly our responsability to keep the cluster network safe.
+
+==============================================================================
+NOTES:
+    - The "$" shown at the beginning of the command lines is not to be included, but just an indication of being logged as sysop and at the command prompt of your computer
+    - When some text is enclosed between "<" ">", they don't have to be included. It is just to say that some info must be typed.
+      f.i., if you see <callsign>, a callsign (without < >) must be typed. It must include the -SSID in case, f.i.: EA2XX-23
+
+==============================================================================
+MEASURES NEEDED: JUST FOUR!
+==============================================================================
+1.- KEEP YOUR CLUSTER SOFTWARE UPDATED. 
+	If new solutions to enforce security are implemented on the new node software versions, only after updating it they can be enabled.
+	
+	Procedure:
+	* Download check_build.pl , from your command prompt and as sysop user: 
+		$ wget -qN https://raw.githubusercontent.com/EA3CV/dxspider_info/main/check_build.pl
+
+	* Move the file to your /spider/local_cmd/ directory:
+		$ mv check_build.pl /spider/local_cmd/
+	
+	* Add to /spider/local_cmd/crontab file the followings line to check for new versions of dxspider at least once per day, -except weekends- (don't change version during contests) and once a week for new versions of the script "check_build.pl":
+		sysop@spider:~$ nano /spider/local_cmd/crontab
+
+	* Include the following lines, changing days and/or hours. The following one will check for updates from Mon to Fri at 03:18 UTC:
+		# Check every monday for new versions of script check_build.pl
+		18 03 * * 1         spawn('cd /spider/local_cmd; wget -qN https://raw.githubusercontent.com/EA3CV/dxspider_info/main/check_build.pl -O /spider/local_cmd/check_build.pl')
+		# Reload commands 
+		19 03 * * 1,2,3,4,5 run_cmd('load/cmd’)
+		# Run the routine, Y option means "make backup of actual version, 3 means "mantain 3 backup sets"
+		20 03 * * 1,2,3,4,5 run_cmd("check_build Y 3")
+     	
+     	(You can use https://crontab.guru/ to check your crontab syntax, but be aware that dxspider crontab file doesn't follow exactly linux cron rules)	
+
+==============================================================================
+2.- CONNECT TO NO MORE THAN 4-6 NODES AND SECURE THESE CONNECTIONS WITH PASSWORDS. 
+	All the spots are forwarded to all the nodes in the network. There is no need to have each single spot being received from 30 nodes, and then forwarded again by your node to all your partners. This only causes unnecessary traffic overload. 4 to 6 partner connections are far enough to avoid network problems, giving redundancy enough.
+	On the other hand, a large number of partner nodes could be difficult to be mantained on good shape. If some of partners stop working, change their configurations, etc., the connections will become erroneous, and it could also constitute a hole for hackers to come into your system.
+	
+    Procedure:
+    * Agree a password with your partner node sysop. It can be the same on both senses (your partner connecting you or you connecting your partner
+
+    * At the spider console type: (don't include the symbols < and > on the commands or lines)
+		set/register <partner_call>     
+		set/spider <partner_call>
+		set/password <partner_call> <password>
+	
+	* Then, edit the /spider/connects/<partner_call> (include the -SSID if it exist) file:
+		$ sudo nano /spider/connects/<partner_call>
+		
+    * Add the following line after the 'ogin:' '<your_node_call>' line:
+    	'word:' '<here_your_password>'    # send your password while connecting to your partner
+
+==============================================================================
+3.- DON'T LINK AS PARTNERS TO NODES WHICH: 
+	- Are running outdated or deadware (not updated regularly or deprecated).
+	- Allow sending spots to all their users without identifying themselves.
+	- Are running software versions that doesn't inform of users connections and disconnections, deadware or with connections to insecure 3rd part nodes.
+	- have connections to other partners with no or poor security policies. That is, your connection is secured, but your partner connects other nodes on an insecure way.
+
+==============================================================================
+4.- ALLOW SPOTTING FROM YOUR NODE *ONLY* TO REGISTERED USERS.
+   (optionally and better, also ask them for a password to authenticate.)
+
+	Procedure: 
+	* Edit your /spider/scripts/startup file:
+		$ nano /spider/scripts/startup
+		
+	* Include the following lines on your /spider/scripts/startup file:
+		set/var $main::reqreg = 1           # allow sending spots to registered users only.
+		set/var $main::passwdreq = 0        # 0: no password required just for receive spots, required for send spots , 1: password required also for login.
+
+	* Then you can register the users from the dxspider console with the command:
+		set/register <callsign>
+
+	* If you also want to assign a password to the registered user type, again from dxspider console:
+		set/password <callsign> <password>      		
+
+	* NOTICE: Dont use "set/pass", type the full command "set/password" !!!
+
+	* Then, you must send this password to the user by means of e-mail, whatsapp, telegram, signal or any other more-or-less private way...
